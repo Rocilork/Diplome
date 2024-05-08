@@ -1,15 +1,27 @@
 package com.example.electronicmagazine
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.TextUtils
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,9 +38,15 @@ import org.json.JSONException
 
 class ListCurators2 : AppCompatActivity() {
     val viewItems = ArrayList<User>()
+    companion object {
+        const val NOTIFICATION_ID = 101
+        const val CHANNEL_ID = "channelID"
+    }
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_curators2)
+
 
         val supabase = createSupabaseClient(
             supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
@@ -65,6 +83,22 @@ class ListCurators2 : AppCompatActivity() {
         Delbut.setOnClickListener {
             val fioR = edit_FIO.text.toString()
             val intent = Intent(this, ListCurators::class.java)
+
+            // Создаём уведомление
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.iconka)
+                .setContentTitle("Уведомление")
+                .setContentText("Вы удалены из системы")
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+//            val notificationManager = NotificationManagerCompat.from(this)
+//            notificationManager.notify(NOTIFICATION_ID, builder.build())
+
+            // или
+            with(NotificationManagerCompat.from(this)) {
+                notify(NOTIFICATION_ID, builder.build()) // посылаем уведомление
+            }
 
             lifecycleScope.launch {
                 try {

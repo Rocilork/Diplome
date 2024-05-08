@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -71,8 +72,10 @@ class Curator2 : AppCompatActivity() {
             val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
             val users = supabase.postgrest["Оценки"].select(columns = columns)
             {
-                intent.getStringExtra("itemTextID")?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
-                intent.getStringExtra("itemTextEst")?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
+                intent.getStringExtra("itemTextID")
+                    ?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
+                intent.getStringExtra("itemTextEst")
+                    ?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
             }.decodeSingle<Estimation2>()
 
             textID.setText(users.id_студента)
@@ -86,8 +89,9 @@ class Curator2 : AppCompatActivity() {
         //Получаем группы
         try {
             lifecycleScope.launch {
-                val session_user = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true)
-                val city = SB.getClient().postgrest["Группы"].select(){
+                val session_user =
+                    SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true)
+                val city = SB.getClient().postgrest["Группы"].select() {
                     eq("id_пользователя", session_user.id)
                 }
                 val buf = StringBuilder()
@@ -95,17 +99,17 @@ class Curator2 : AppCompatActivity() {
                 var array: JSONArray = JSONArray(buf.toString())
 
                 try {
-                    for(i in 0 until   array.length()){
+                    for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
                         val api = GroupClass(Название)
                         viewItems2.add(api)
                     }
-                }catch (e: JSONException){
+                } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
                 }
             }
-        }catch (ex: Exception){
+        } catch (ex: Exception) {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список групп
@@ -114,13 +118,14 @@ class Curator2 : AppCompatActivity() {
         spinGroup.adapter = arrayAdapter2
 
         spinGroup.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener{
+            AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 //recyclerView.adapter = spinGroup[p2]
                 //recyclerView.adapter = Adapter_Curator(viewItems2)
                 //spinGroup.textAlignment = selectG.toString().length
 
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
@@ -136,17 +141,17 @@ class Curator2 : AppCompatActivity() {
                 var array: JSONArray = JSONArray(buf.toString())
 
                 try {
-                    for(i in 0 until   array.length()){
+                    for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
                         val api = Items(Название)
                         viewItems.add(api)
                     }
-                }catch (e: JSONException){
+                } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
                 }
             }
-        }catch (ex: Exception){
+        } catch (ex: Exception) {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список предметов
@@ -155,7 +160,7 @@ class Curator2 : AppCompatActivity() {
         spinItem.adapter = arrayAdapter
 
         spinItem.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener{
+            AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 //recyclerView.adapter = spinItem[p2]
                 //recyclerView.adapter = Adapter_Curator(viewItems)
@@ -163,6 +168,7 @@ class Curator2 : AppCompatActivity() {
                 //spinItem.adapter = arrayAdapter
 
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
@@ -172,13 +178,13 @@ class Curator2 : AppCompatActivity() {
         try {
             lifecycleScope.launch {
                 val columns = Columns.raw("""ID_пользователя, ФИО""".trimIndent())
-                val city = supabase.postgrest["Пользователь"].select(columns = columns){
+                val city = supabase.postgrest["Пользователь"].select(columns = columns) {
                     eq("id_роли", 1)
                 }
                 Log.e("!!!", city.body.toString())
 
                 val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
-                val city4 = supabase.postgrest["Оценки"].select(columns = columns4){
+                val city4 = supabase.postgrest["Оценки"].select(columns = columns4) {
                     //eq("id_студента", city.body.toString())
                     //city.body.toString()
                 }
@@ -189,7 +195,7 @@ class Curator2 : AppCompatActivity() {
                 val array = JSONArray(buf.toString())
 
                 try {
-                    for(i in 0 until   array.length()){
+                    for (i in 0 until array.length()) {
                         val item = array.getJSONObject(i)
                         val ID_оценки = item.getInt("ID_оценки")
                         val id_студента = item.getString("id_студента")
@@ -198,18 +204,19 @@ class Curator2 : AppCompatActivity() {
                         val api = Estimation2(ID_оценки, id_студента, Оценка_НБ)
                         viewItems3.add(api)
                     }
-                }catch (e: JSONException){
+                } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
                 }
             }
-        }catch (ex: Exception){
+        } catch (ex: Exception) {
             Log.e("!!!", ex.toString())
         }
-        recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-        val timer = object: CountDownTimer(3000, 1000){
+        recyclerView.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+        val timer = object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
-            override fun onFinish(){
+            override fun onFinish() {
                 recyclerView.adapter = Adapter_Curator(viewItems3, this@Curator2)
             }
         }
@@ -227,24 +234,25 @@ class Curator2 : AppCompatActivity() {
                 val array = JSONArray(buf.toString())
 
                 try {
-                    for(i in 0 until   array.length()){
+                    for (i in 0 until array.length()) {
                         val item = array.getJSONObject(i)
                         val Дата = item.getString("Дата")
                         val api = DateEstimation(Дата)
                         viewItems4.add(api)
                     }
-                }catch (e: JSONException){
+                } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
                 }
             }
-        }catch (ex: Exception){
+        } catch (ex: Exception) {
             Log.e("!!!", ex.toString())
         }
-        recyclerViewDate.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val timer2 = object: CountDownTimer(3000, 1000){
+        recyclerViewDate.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        val timer2 = object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
-            override fun onFinish(){
+            override fun onFinish() {
                 recyclerViewDate.adapter = Adapter_DateCurator(viewItems4)
             }
         }
@@ -260,10 +268,33 @@ class Curator2 : AppCompatActivity() {
         }
 
         butSave.setOnClickListener {
-            Toast.makeText(applicationContext, "Выберите студента!", Toast.LENGTH_SHORT).show()
+            val est = estN_B.text.toString()
+            val intent = Intent(this, ListCurators::class.java)
+
+            lifecycleScope.launch {
+                try {
+                    val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+
+                    supabase.postgrest["Оценки"].update(
+                        {
+                            set("Оценка_НБ", est)
+                        }
+                    ) {
+                        eq("ID_оценки", userId)
+                    }
+
+                    estN_B.text.clear()
+                    Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT)
+                        .show()
+
+                    startActivity(intent)
+                } catch (ex: JSONException) {
+                    Log.e("!!!", ex.message.toString())
+                }
+            }
         }
     }
-    fun onBack (view: View){
+    fun onBack(view: View) {
         val intent = Intent(this, Avtorizathion::class.java)
         startActivity(intent)
     }
