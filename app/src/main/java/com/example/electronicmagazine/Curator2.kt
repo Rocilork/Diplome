@@ -89,8 +89,7 @@ class Curator2 : AppCompatActivity() {
         //Получаем группы
         try {
             lifecycleScope.launch {
-                val session_user =
-                    SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true)
+                val session_user = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true)
                 val city = SB.getClient().postgrest["Группы"].select() {
                     eq("id_пользователя", session_user.id)
                 }
