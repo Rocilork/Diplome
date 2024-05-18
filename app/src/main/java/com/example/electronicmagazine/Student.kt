@@ -23,6 +23,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class Student : AppCompatActivity() {
+    //Используем класс, в котором хранятся данные
     val viewItems = ArrayList<Estimation>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ class Student : AppCompatActivity() {
             {
                 eq("ID_пользователя", session_user.id)
             }.decodeSingle<User>()
-
+            //Получаем ФИО авторизованного пользователя
             textView.setText(users.ФИО)
         }
 
@@ -75,7 +76,7 @@ class Student : AppCompatActivity() {
         }catch (ex: Exception){
             Log.e("!!!", ex.toString())
         }
-
+        //Заполняем список
         recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         val timer = object: CountDownTimer(3000, 1000){
             override fun onTick(millisUntilFinished: Long) {}

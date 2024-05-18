@@ -48,7 +48,7 @@ class Avtorizathion : AppCompatActivity() {
                     lifecycleScope.launch {
                         //Обработка на ошибку
                         try {
-                            //Подключаем объект для запоминания сеанса пользователя после авторизации
+                            //Авторизация пользователя по электронной почте и паролю
                             SB.getClient().gotrue.loginWith(Email) {
                                 email = logA
                                 password = passA
@@ -64,7 +64,7 @@ class Avtorizathion : AppCompatActivity() {
                                 1 -> print(startActivity(intentS))
                                 2 -> print(startActivity(intentC))
                                 3 -> print(startActivity(intentA))
-                                else -> { // Внимание на блок
+                                else -> { // Если ошибка
                                     print("Ошибка")
                                 }
                             }

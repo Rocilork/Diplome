@@ -79,7 +79,6 @@ class Curator : AppCompatActivity() {
                 val buf = StringBuilder()
                 buf.append(city.body.toString()).append("\n")
                 var array: JSONArray = JSONArray(buf.toString())
-
                 try {
                     for(i in 0 until   array.length()){
                         val itemObj = array.getJSONObject(i)
@@ -94,9 +93,13 @@ class Curator : AppCompatActivity() {
         }catch (ex: Exception){
             Log.e("!!!", ex.toString())
         }
+
         //Выпадающий список групп
+        //        val items = arrayOf("Стандартизация", "Разработка баз данных")
+        //val items = arrayListOf(viewItems2)
+        //val items = viewItems2.toString()
         val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        //arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinGroup.adapter = arrayAdapter2
 
         spinGroup.onItemSelectedListener = object :
@@ -136,6 +139,7 @@ class Curator : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список предметов
+
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinItem.adapter = arrayAdapter

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
@@ -84,7 +86,7 @@ class ListCurators2 : AppCompatActivity() {
             val fioR = edit_FIO.text.toString()
             val intent = Intent(this, ListCurators::class.java)
 
-            // Создаём уведомление
+//            // Создаём уведомление
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.iconka)
                 .setContentTitle("Уведомление")
@@ -99,6 +101,7 @@ class ListCurators2 : AppCompatActivity() {
             with(NotificationManagerCompat.from(this)) {
                 notify(NOTIFICATION_ID, builder.build()) // посылаем уведомление
             }
+            //openDialog()
 
             lifecycleScope.launch {
                 try {
@@ -189,5 +192,21 @@ class ListCurators2 : AppCompatActivity() {
     fun onBack (view: View){
         val intent = Intent(this, Administrator::class.java)
         startActivity(intent)
+    }
+    private fun openDialog() {
+        //val builder: AlertDialog.Builder = Builder(this)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setMessage("Вы уверены, что хотите удалить?")
+        builder.setTitle(android.R.string.dialog_alert_title)
+        builder.setIcon(R.drawable.iconka)
+        //кнопка Да и обработчик событий
+        builder.setPositiveButton("Да",
+            DialogInterface.OnClickListener { dialog, id -> this.finish() })
+        //кнопка Нет и обработчик событий
+        builder.setNegativeButton("Нет",
+            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        builder.setCancelable(false)
+        builder.create()
+        builder.show()
     }
 }

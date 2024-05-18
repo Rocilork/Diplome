@@ -78,51 +78,56 @@
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewDate"
+            android:id="@+id/recyclerViewStudent"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginHorizontal="20dp"
             android:background="@drawable/rounded_edit_text" />
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/FIO_student"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="ФИО студента"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
-            android:inputType="text"
-            android:layout_marginBottom="20dp"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/login_curator"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="Логин студента (email)"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
-            android:inputType="textEmailAddress"
-            android:layout_marginBottom="20dp"/>
+            <EditText
+                android:id="@+id/FIO_student"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="ФИО студента"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:inputType="text"
+                android:layout_marginBottom="20dp"/>
 
-        <EditText
-            android:id="@+id/password_curator"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="Пароль студента"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
-            android:inputType="number"
-            android:layout_marginBottom="20dp"/>
-    </LinearLayout>
+            <EditText
+                android:id="@+id/login_student"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="Логин студента (email)"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="20dp"/>
+
+            <EditText
+                android:id="@+id/password_student"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="Пароль студента"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:inputType="number"
+                android:layout_marginBottom="20dp"/>
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -160,7 +165,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/save"
+            android:id="@+id/saveG"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
