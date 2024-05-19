@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.electronicmagazine.Adapter.Adapter_FIO_Curator
 import com.example.electronicmagazine.Adapter.Adapter_FIO_Student
+import com.example.electronicmagazine.Class.ClassGroups
 import com.example.electronicmagazine.Class.GroupClass
 import com.example.electronicmagazine.Class.Items
 import com.example.electronicmagazine.Class.Speciality
@@ -217,7 +218,31 @@ class CreateEditGroup : AppCompatActivity() {
                         startActivity(intent)
                     }
                 }
-            }catch (ex: JSONException) {
+            }catch (ex: JSONException){
+                Log.e("!!!", ex.message.toString())
+            }
+        }
+        //Группа
+        butSaveGroup.setOnClickListener {
+            val groupR = groupName.text.toString()
+            val spC = spinCurator.textAlignment.toString()
+            val spS = spinSpeciality.textAlignment.toInt()
+
+            val intent = Intent(this, Administrator::class.java)
+
+            try {
+                if(groupR == "" || spC == "" || spS == toString().length){
+                    Toast.makeText(applicationContext, "Не всё заполнено!", Toast.LENGTH_SHORT).show()
+                }else{
+                    lifecycleScope.launch {
+                        //val city = ClassGroups(ID_группы = 0, Название = groupR, id_специальности = spS, id_пользователя = spC)
+                        val city = ClassGroups(ID_группы = 0, Название = groupR,)
+                        supabase.postgrest["Группы"].insert(city)
+                        Toast.makeText(applicationContext, "Группа создана!", Toast.LENGTH_SHORT).show()
+                        startActivity(intent)
+                    }
+                }
+            }catch (ex: JSONException){
                 Log.e("!!!", ex.message.toString())
             }
         }
