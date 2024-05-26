@@ -37,14 +37,10 @@ import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
+import java.util.concurrent.Flow
 
 class ListCurators2 : AppCompatActivity() {
     val viewItems = ArrayList<User>()
-    companion object {
-        const val NOTIFICATION_ID = 101
-        const val CHANNEL_ID = "channelID"
-    }
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_curators2)
@@ -86,21 +82,6 @@ class ListCurators2 : AppCompatActivity() {
             val fioR = edit_FIO.text.toString()
             val intent = Intent(this, ListCurators::class.java)
 
-//            // Создаём уведомление
-            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.iconka)
-                .setContentTitle("Уведомление")
-                .setContentText("Вы удалены из системы")
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-//            val notificationManager = NotificationManagerCompat.from(this)
-//            notificationManager.notify(NOTIFICATION_ID, builder.build())
-
-            // или
-            with(NotificationManagerCompat.from(this)) {
-                notify(NOTIFICATION_ID, builder.build()) // посылаем уведомление
-            }
             //openDialog()
 
             lifecycleScope.launch {
@@ -125,6 +106,16 @@ class ListCurators2 : AppCompatActivity() {
             val intent = Intent(this, ListCurators::class.java)
 
             lifecycleScope.launch {
+
+//                val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+//                val flow: Flow<User> = supabase.postgrest["Пользователь"].select(User::ID_пользователя) {
+//                    //or
+//                    eq("ID_пользователя", userId)
+//                }
+//                flow.collect {
+//                    println("My country is $it")
+//                }
+
                 try {
                     val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
                     supabase.postgrest["Пользователь"].update(

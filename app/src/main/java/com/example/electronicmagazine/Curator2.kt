@@ -72,10 +72,8 @@ class Curator2 : AppCompatActivity() {
             val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
             val users = supabase.postgrest["Оценки"].select(columns = columns)
             {
-                intent.getStringExtra("itemTextID")
-                    ?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
-                intent.getStringExtra("itemTextEst")
-                    ?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
+                intent.getStringExtra("itemTextID")?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
+                intent.getStringExtra("itemTextEst")?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
             }.decodeSingle<Estimation2>()
 
             textID.setText(users.id_студента)
@@ -246,8 +244,7 @@ class Curator2 : AppCompatActivity() {
         } catch (ex: Exception) {
             Log.e("!!!", ex.toString())
         }
-        recyclerViewDate.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewDate.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
         val timer2 = object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
@@ -266,29 +263,38 @@ class Curator2 : AppCompatActivity() {
 
         }
 
+        //сохранить
         butSave.setOnClickListener {
             val est = estN_B.text.toString()
-            val intent = Intent(this, ListCurators::class.java)
+            val intent = Intent(this, Curator::class.java)
 
-            lifecycleScope.launch {
-                try {
-                    val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+            val two: Int = 2
+            val three: Int = 3
+            val four: Int = 4
+            val five: Int = 5
+            val NB: String = "Н/Б"
 
-                    supabase.postgrest["Оценки"].update(
-                        {
-                            set("Оценка_НБ", est)
+            if (est != two.toString() && est != three.toString() && est != four.toString() && est != five.toString() && est != NB.toString() || est == "") {
+                Toast.makeText(applicationContext, "Корректные: 2, 3, 4, 5, Н/Б.", Toast.LENGTH_SHORT).show()
+            } else {
+                lifecycleScope.launch {
+                    try {
+                        val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                        supabase.postgrest["Оценки"].update(
+                            {
+                                set("Оценка_НБ", est)
+                            }
+                        ) {
+                            eq("id_студента", userId)
                         }
-                    ) {
-                        eq("ID_оценки", userId)
+
+                        estN_B.text.clear()
+                        Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT).show()
+
+                        startActivity(intent)
+                    } catch (ex: JSONException) {
+                        Log.e("!!!", ex.message.toString())
                     }
-
-                    estN_B.text.clear()
-                    Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT)
-                        .show()
-
-                    startActivity(intent)
-                } catch (ex: JSONException) {
-                    Log.e("!!!", ex.message.toString())
                 }
             }
         }
