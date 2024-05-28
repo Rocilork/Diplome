@@ -34,7 +34,14 @@ import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.Realtime
+import io.github.jan.supabase.realtime.broadcastFlow
+import io.github.jan.supabase.realtime.createChannel
+import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.github.jan.supabase.realtime.realtime
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.concurrent.Flow
@@ -52,6 +59,7 @@ class ListCurators2 : AppCompatActivity() {
         ) {
             install(GoTrue)
             install(Postgrest)
+            install(Realtime)
             //install other modules
         }
 
@@ -66,11 +74,13 @@ class ListCurators2 : AppCompatActivity() {
 
         //Корутина
         lifecycleScope.launch {
+            //Подключаемся к таблице
             val users = supabase.postgrest["Пользователь"].select()
             {
+               //Передаём данные пользователя
                 intent.getStringExtra("itemText")?.let { eq("ФИО", intent.getStringExtra("itemText")!!) }
             }.decodeSingle<User>()
-
+            //Получаем данные пользователя в текстовом поле
             edit_FIO.setText(users.ФИО)
             //edit_FIO.text.clear()
             //edit_Log.setText(session_user.email)
@@ -86,14 +96,53 @@ class ListCurators2 : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
+                    //Удаляем пользователя из таблицы
                     supabase.postgrest["Пользователь"].delete {
                         eq("ФИО", fioR)
                     }
-
+                    //Очищаем текстовое поле
                     edit_FIO.text.clear()
+                    //Получаем уведомление
                     Toast.makeText(applicationContext, "Куратор удалён!", Toast.LENGTH_SHORT).show()
 
                     startActivity(intent)
+
+
+                    //Прослушка
+//                    @Serializable
+//                    data class Message(val content: String, val sender: String)
+//
+//                    val channel = supabase.realtime.createChannel("channelId") {
+//                        //optional config
+//                    }
+//                    //Log.e("!!!", channel.toString())
+//                    val broadcastFlow = channel.broadcastFlow<Message>(event = "message")
+//
+////in a new coroutine (or use Flow.onEach().launchIn(scope)):
+//                    broadcastFlow.collect { //it: Message
+//                        println(it)
+//                    }
+//
+//                    supabase.realtime.connect()
+//                    channel.join(blockUntilJoined = true)
+//
+//                    channel.broadcast(event = "message", Message("I joined!", "John"))
+
+
+//                    val channel = supabase.realtime.createChannel("channelId") {
+//                        //optional config
+//                    }
+//                    val changeFlow = channel.postgresChangeFlow<PostgresAction.Delete>(schema = "public") {
+//                        table = "Пользователь"
+//                    }
+////in a new coroutine (or use Flow.onEach().launchIn(scope)):
+//                    changeFlow.collect {
+//                        println(it.oldRecord)
+//                    }
+//
+//                    supabase.realtime.connect()
+//                    channel.join()
+
                 }catch (ex: JSONException){
                     Log.e("!!!", ex.message.toString())
                 }
@@ -117,7 +166,9 @@ class ListCurators2 : AppCompatActivity() {
 //                }
 
                 try {
+                    //Запоминаем сессию выбранного пользователя
                     val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                    //Обновляем данные пользователя в таблице
                     supabase.postgrest["Пользователь"].update(
                         {
                             set("ФИО", fioR)
@@ -125,8 +176,9 @@ class ListCurators2 : AppCompatActivity() {
                     ) {
                             eq("ID_пользователя", userId)
                     }
-
+                    //Очищаем текстовое поле
                     edit_FIO.text.clear()
+                    //Получаем уведомление
                     Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT).show()
 
                     startActivity(intent)
@@ -200,4 +252,8 @@ class ListCurators2 : AppCompatActivity() {
         builder.create()
         builder.show()
     }
+}
+
+private fun Any.broadcast(event: String, message: Any) {
+
 }

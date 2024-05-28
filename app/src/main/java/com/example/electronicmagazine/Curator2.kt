@@ -267,13 +267,13 @@ class Curator2 : AppCompatActivity() {
         butSave.setOnClickListener {
             val est = estN_B.text.toString()
             val intent = Intent(this, Curator::class.java)
-
+            //Данные, которые должны быть равны указанные в поле ввода
             val two: Int = 2
             val three: Int = 3
             val four: Int = 4
             val five: Int = 5
             val NB: String = "Н/Б"
-
+            //Проверяем корректность данных
             if (est != two.toString() && est != three.toString() && est != four.toString() && est != five.toString() && est != NB.toString() || est == "") {
                 Toast.makeText(applicationContext, "Корректные: 2, 3, 4, 5, Н/Б.", Toast.LENGTH_SHORT).show()
             } else {
