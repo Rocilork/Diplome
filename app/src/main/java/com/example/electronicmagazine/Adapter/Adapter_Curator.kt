@@ -34,6 +34,7 @@ class Adapter_Curator(val api: ArrayList<Estimation2>, val context: Context): Re
         holder.itemView.setOnClickListener {
             // обработка нажатия
             val intent = Intent(context, Curator2::class.java)
+            intent.putExtra("itemText", api[position].ID_оценки)
             intent.putExtra("itemTextID", api[position].id_студента)
             intent.putExtra("itemTextEst", api[position].Оценка_НБ)
             context.startActivity(intent)

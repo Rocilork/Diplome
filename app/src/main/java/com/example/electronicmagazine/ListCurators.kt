@@ -38,15 +38,6 @@ class ListCurators : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_curators)
 
-        val supabase = createSupabaseClient(
-            supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZnBjcGJsZG16bGp5Z2t1Z3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NTgxMTksImV4cCI6MjAyNDUzNDExOX0.P0eB4dN0mC-nvLokB-5ZVqw15vG5LiqlwnXXvJzbUbw"
-        ) {
-            install(GoTrue)
-            install(Postgrest)
-            //install other modules
-        }
-
         val Delbut: Button = findViewById(R.id.delete_curator)
         val Savbut: Button = findViewById(R.id.save_curator)
 
@@ -76,14 +67,14 @@ class ListCurators : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Почта некорректна!", Toast.LENGTH_SHORT).show()
                 } else{
                     lifecycleScope.launch {
-                        val user = supabase.gotrue.signUpWith(Email) {
+                        val user = SB.getClient().gotrue.signUpWith(Email) {
                             email = logR
                             password = pasR
                         }
 
-                        val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
                         val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
-                        supabase.postgrest["Пользователь"].insert(city)
+                        SB.getClient().postgrest["Пользователь"].insert(city)
 
                         Toast.makeText(applicationContext, "Куратор зарегистрирован!", Toast.LENGTH_SHORT).show()
                         startActivity(intent)
@@ -97,7 +88,7 @@ class ListCurators : AppCompatActivity() {
         //Получаем кураторов
         try {
             lifecycleScope.launch {
-                val users = supabase.postgrest["Пользователь"].select(){
+                val users = SB.getClient().postgrest["Пользователь"].select(){
                         eq("id_роли", 2)
                 }
 

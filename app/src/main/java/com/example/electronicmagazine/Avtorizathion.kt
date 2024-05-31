@@ -15,6 +15,12 @@ import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.createChannel
+import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.github.jan.supabase.realtime.realtime
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import java.lang.Exception
@@ -45,7 +51,8 @@ class Avtorizathion : AppCompatActivity() {
                 }
                 else{
                     //Корутина
-                    lifecycleScope.launch {
+                    val yourCoroutineScope = lifecycleScope
+                    yourCoroutineScope.launch {
                         //Обработка на ошибку
                         try {
                             //Авторизация пользователя по электронной почте и паролю
@@ -68,6 +75,22 @@ class Avtorizathion : AppCompatActivity() {
                                     print("Ошибка")
                                 }
                             }
+
+
+                            val channel = SB.getClient().realtime.createChannel("channelId2") {
+                                //optional config
+                            }
+                            val changes = channel.postgresChangeFlow<PostgresAction.Update>(schema = "public") {
+                                table = "Пользователь"
+                                // filter = "name=in.(red, blue, yellow)"
+                            }
+                            changes.onEach {
+                                println(it.record)
+                                Log.e("UPD:"," ${it.record}")
+                                Toast.makeText(applicationContext, "${it.record}", Toast.LENGTH_LONG).show()
+                            }.launchIn(yourCoroutineScope)
+                            SB.getClient().realtime.connect()
+                            channel.join()
                             //Если произошла ошибка
                         }catch (ex: Exception){
                             Toast.makeText(applicationContext, "Такого пользователя нет!", Toast.LENGTH_SHORT).show()

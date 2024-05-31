@@ -43,15 +43,6 @@ class CreateEditGroup : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_group)
 
-        val supabase = createSupabaseClient(
-            supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZnBjcGJsZG16bGp5Z2t1Z3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NTgxMTksImV4cCI6MjAyNDUzNDExOX0.P0eB4dN0mC-nvLokB-5ZVqw15vG5LiqlwnXXvJzbUbw"
-        ) {
-            install(GoTrue)
-            install(Postgrest)
-            //install other modules
-        }
-
         val spinCurator: Spinner = findViewById(R.id.curator)
         val spinSpeciality: Spinner = findViewById(R.id.speciality)
 
@@ -69,7 +60,7 @@ class CreateEditGroup : AppCompatActivity() {
         //Получаем кураторов
         try {
             lifecycleScope.launch {
-                val city = supabase.postgrest["Пользователь"].select() {
+                val city = SB.getClient().postgrest["Пользователь"].select() {
                     eq("id_роли", 2)
                 }
                 val buf = StringBuilder()
@@ -110,7 +101,7 @@ class CreateEditGroup : AppCompatActivity() {
         //Получаем специальности
         try {
             lifecycleScope.launch {
-                val city = supabase.postgrest["Специальность"].select()
+                val city = SB.getClient().postgrest["Специальность"].select()
                 val buf = StringBuilder()
                 buf.append(city.body.toString()).append("\n")
                 var array: JSONArray = JSONArray(buf.toString())
@@ -149,7 +140,7 @@ class CreateEditGroup : AppCompatActivity() {
         //Получаем студентов
         try {
             lifecycleScope.launch {
-                val users = supabase.postgrest["Пользователь"].select(){
+                val users = SB.getClient().postgrest["Пользователь"].select(){
                     eq("id_роли", 1)
                 }
 
@@ -205,14 +196,14 @@ class CreateEditGroup : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Почта некорректна!", Toast.LENGTH_SHORT).show()
                 } else{
                     lifecycleScope.launch {
-                        val user = supabase.gotrue.signUpWith(Email) {
+                        val user = SB.getClient().gotrue.signUpWith(Email) {
                             email = logR
                             password = pasR
                         }
 
-                        val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
                         val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
-                        supabase.postgrest["Пользователь"].insert(city)
+                        SB.getClient().postgrest["Пользователь"].insert(city)
 
                         Toast.makeText(applicationContext, "Студент добавлен!", Toast.LENGTH_SHORT).show()
                         startActivity(intent)
@@ -237,7 +228,7 @@ class CreateEditGroup : AppCompatActivity() {
                     lifecycleScope.launch {
                         //val city = ClassGroups(ID_группы = 0, Название = groupR, id_специальности = spS, id_пользователя = spC)
                         val city = ClassGroups(ID_группы = 0, Название = groupR,)
-                        supabase.postgrest["Группы"].insert(city)
+                        SB.getClient().postgrest["Группы"].insert(city)
                         Toast.makeText(applicationContext, "Группа создана!", Toast.LENGTH_SHORT).show()
                         startActivity(intent)
                     }

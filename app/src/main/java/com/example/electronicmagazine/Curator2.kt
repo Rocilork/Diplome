@@ -44,15 +44,6 @@ class Curator2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_curator2)
 
-        val supabase = createSupabaseClient(
-            supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZnBjcGJsZG16bGp5Z2t1Z3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NTgxMTksImV4cCI6MjAyNDUzNDExOX0.P0eB4dN0mC-nvLokB-5ZVqw15vG5LiqlwnXXvJzbUbw"
-        ) {
-            install(GoTrue)
-            install(Postgrest)
-            //install other modules
-        }
-
         val spinGroup: Spinner = findViewById(R.id.group)
         val spinItem: Spinner = findViewById(R.id.item)
 
@@ -70,8 +61,9 @@ class Curator2 : AppCompatActivity() {
         //Корутина
         lifecycleScope.launch {
             val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
-            val users = supabase.postgrest["Оценки"].select(columns = columns)
+            val users = SB.getClient().postgrest["Оценки"].select(columns = columns)
             {
+                intent.getStringExtra("itemText")?.let { eq("ID_оценки", intent.getStringExtra("itemText")!!) }
                 intent.getStringExtra("itemTextID")?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
                 intent.getStringExtra("itemTextEst")?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
             }.decodeSingle<Estimation2>()
@@ -174,14 +166,14 @@ class Curator2 : AppCompatActivity() {
         //Получаем студентов
         try {
             lifecycleScope.launch {
-                val columns = Columns.raw("""ID_пользователя, ФИО""".trimIndent())
-                val city = supabase.postgrest["Пользователь"].select(columns = columns) {
-                    eq("id_роли", 1)
-                }
-                Log.e("!!!", city.body.toString())
+//                val columns = Columns.raw("""ID_пользователя, ФИО""".trimIndent())
+//                val city = supabase.postgrest["Пользователь"].select(columns = columns) {
+//                    eq("id_роли", 1)
+//                }
+//                Log.e("!!!", city.body.toString())
 
                 val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
-                val city4 = supabase.postgrest["Оценки"].select(columns = columns4) {
+                val city4 = SB.getClient().postgrest["Оценки"].select(columns = columns4) {
                     //eq("id_студента", city.body.toString())
                     //city.body.toString()
                 }
@@ -223,7 +215,7 @@ class Curator2 : AppCompatActivity() {
         try {
             lifecycleScope.launch {
                 val columns4 = Columns.raw("""Дата""".trimIndent())
-                val city4 = supabase.postgrest["Оценки"].select(columns = columns4)
+                val city4 = SB.getClient().postgrest["Оценки"].select(columns = columns4)
                 Log.e("!!!", city4.body.toString())
 
                 val buf = StringBuilder()
@@ -279,8 +271,8 @@ class Curator2 : AppCompatActivity() {
             } else {
                 lifecycleScope.launch {
                     try {
-                        val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
-                        supabase.postgrest["Оценки"].update(
+                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                        SB.getClient().postgrest["Оценки"].update(
                             {
                                 set("Оценка_НБ", est)
                             }

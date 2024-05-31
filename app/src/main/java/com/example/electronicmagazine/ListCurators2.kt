@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.electronicmagazine.Adapter.Adapter_FIO_Curator
 import com.example.electronicmagazine.Class.User
+import com.example.electronicmagazine.Object.SB
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
@@ -52,17 +53,6 @@ class ListCurators2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_curators2)
 
-
-        val supabase = createSupabaseClient(
-            supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZnBjcGJsZG16bGp5Z2t1Z3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NTgxMTksImV4cCI6MjAyNDUzNDExOX0.P0eB4dN0mC-nvLokB-5ZVqw15vG5LiqlwnXXvJzbUbw"
-        ) {
-            install(GoTrue)
-            install(Postgrest)
-            install(Realtime)
-            //install other modules
-        }
-
         val Delbut: Button = findViewById(R.id.delete_curator)
         val Savbut: Button = findViewById(R.id.save_curator)
 
@@ -75,7 +65,7 @@ class ListCurators2 : AppCompatActivity() {
         //Корутина
         lifecycleScope.launch {
             //Подключаемся к таблице
-            val users = supabase.postgrest["Пользователь"].select()
+            val users = SB.getClient().postgrest["Пользователь"].select()
             {
                //Передаём данные пользователя
                 intent.getStringExtra("itemText")?.let { eq("ФИО", intent.getStringExtra("itemText")!!) }
@@ -97,7 +87,7 @@ class ListCurators2 : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     //Удаляем пользователя из таблицы
-                    supabase.postgrest["Пользователь"].delete {
+                    SB.getClient().postgrest["Пользователь"].delete {
                         eq("ФИО", fioR)
                     }
                     //Очищаем текстовое поле
@@ -106,43 +96,6 @@ class ListCurators2 : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Куратор удалён!", Toast.LENGTH_SHORT).show()
 
                     startActivity(intent)
-
-
-                    //Прослушка
-//                    @Serializable
-//                    data class Message(val content: String, val sender: String)
-//
-//                    val channel = supabase.realtime.createChannel("channelId") {
-//                        //optional config
-//                    }
-//                    //Log.e("!!!", channel.toString())
-//                    val broadcastFlow = channel.broadcastFlow<Message>(event = "message")
-//
-////in a new coroutine (or use Flow.onEach().launchIn(scope)):
-//                    broadcastFlow.collect { //it: Message
-//                        println(it)
-//                    }
-//
-//                    supabase.realtime.connect()
-//                    channel.join(blockUntilJoined = true)
-//
-//                    channel.broadcast(event = "message", Message("I joined!", "John"))
-
-
-//                    val channel = supabase.realtime.createChannel("channelId") {
-//                        //optional config
-//                    }
-//                    val changeFlow = channel.postgresChangeFlow<PostgresAction.Delete>(schema = "public") {
-//                        table = "Пользователь"
-//                    }
-////in a new coroutine (or use Flow.onEach().launchIn(scope)):
-//                    changeFlow.collect {
-//                        println(it.oldRecord)
-//                    }
-//
-//                    supabase.realtime.connect()
-//                    channel.join()
-
                 }catch (ex: JSONException){
                     Log.e("!!!", ex.message.toString())
                 }
@@ -155,21 +108,11 @@ class ListCurators2 : AppCompatActivity() {
             val intent = Intent(this, ListCurators::class.java)
 
             lifecycleScope.launch {
-
-//                val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
-//                val flow: Flow<User> = supabase.postgrest["Пользователь"].select(User::ID_пользователя) {
-//                    //or
-//                    eq("ID_пользователя", userId)
-//                }
-//                flow.collect {
-//                    println("My country is $it")
-//                }
-
                 try {
                     //Запоминаем сессию выбранного пользователя
-                    val userId = supabase.gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                    val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
                     //Обновляем данные пользователя в таблице
-                    supabase.postgrest["Пользователь"].update(
+                    SB.getClient().postgrest["Пользователь"].update(
                         {
                             set("ФИО", fioR)
                         }
@@ -180,7 +123,6 @@ class ListCurators2 : AppCompatActivity() {
                     edit_FIO.text.clear()
                     //Получаем уведомление
                     Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT).show()
-
                     startActivity(intent)
                 }catch (ex: JSONException){
                     Log.e("!!!", ex.message.toString())
@@ -191,7 +133,7 @@ class ListCurators2 : AppCompatActivity() {
         //Получаем кураторов
         try {
             lifecycleScope.launch {
-                val users = supabase.postgrest["Пользователь"].select(){
+                val users = SB.getClient().postgrest["Пользователь"].select(){
                     eq("id_роли", 2)
                 }
 

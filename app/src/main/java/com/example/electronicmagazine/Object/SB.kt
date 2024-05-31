@@ -4,6 +4,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 
 object SB {
     val supabase = createSupabaseClient(
@@ -12,6 +13,7 @@ object SB {
     ) {
         install(GoTrue)
         install(Postgrest)
+        install(Realtime)
         //install other modules
     }
     public fun getClient(): SupabaseClient {
