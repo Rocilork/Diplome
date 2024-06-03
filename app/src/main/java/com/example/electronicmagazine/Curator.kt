@@ -90,7 +90,7 @@ class Curator : AppCompatActivity() {
         //val items = arrayListOf(viewItems2)
         //val items = viewItems2.toString()
         val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
-        //arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinGroup.adapter = arrayAdapter2
 
         spinGroup.onItemSelectedListener = object :

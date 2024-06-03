@@ -1,6 +1,10 @@
 package com.example.electronicmagazine
 
+import android.Manifest
+import android.app.Notification
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
@@ -8,6 +12,10 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.electronicmagazine.Class.User
 import com.example.electronicmagazine.Object.SB
@@ -87,7 +95,34 @@ class Avtorizathion : AppCompatActivity() {
                             changes.onEach {
                                 println(it.record)
                                 Log.e("UPD:"," ${it.record}")
-                                Toast.makeText(applicationContext, "${it.record}", Toast.LENGTH_LONG).show()
+
+                                @Suppress("DEPRECATION") val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Notification.Builder(this@Avtorizathion, " ${it.record}")
+                                        .setSmallIcon(R.drawable.iconka)
+                                        .setContentTitle("Уведомление")
+                                        .setContentText("Изменения")
+                                        .setAutoCancel(true)
+                                        .setPriority(Notification.PRIORITY_DEFAULT)
+                                } else {
+                                    TODO("VERSION.SDK_INT < O")
+                                }
+
+                                with(NotificationManagerCompat.from(this@Avtorizathion)){
+                                    if (ActivityCompat.checkSelfPermission(this@Avtorizathion, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                        // TODO: Consider calling
+                                        //    ActivityCompat#requestPermissions
+                                        // here to request the missing permissions, and then overriding
+                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                        //                                          int[] grantResults)
+                                        // to handle the case where the user grants the permission. See the documentation
+                                        // for ActivityCompat#requestPermissions for more details.
+                                        notify(NOTIFICATION_SERVICE.length, builder.build())
+                                        //notify(changes.toString().length, builder.build())
+                                    }
+                                }
+
+
+                            //Toast.makeText(applicationContext, "${it.record}", Toast.LENGTH_LONG).show()
                             }.launchIn(yourCoroutineScope)
                             SB.getClient().realtime.connect()
                             channel.join()

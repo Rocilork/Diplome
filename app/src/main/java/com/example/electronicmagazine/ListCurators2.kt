@@ -195,7 +195,3 @@ class ListCurators2 : AppCompatActivity() {
         builder.show()
     }
 }
-
-private fun Any.broadcast(event: String, message: Any) {
-
-}
