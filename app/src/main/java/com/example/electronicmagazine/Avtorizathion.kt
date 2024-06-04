@@ -2,6 +2,7 @@ package com.example.electronicmagazine
 
 import android.Manifest
 import android.app.Notification
+import android.app.NotificationChannel
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import java.lang.Exception
 class Avtorizathion : AppCompatActivity() {
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_avtorizathion)
@@ -96,8 +98,8 @@ class Avtorizathion : AppCompatActivity() {
                                 println(it.record)
                                 Log.e("UPD:"," ${it.record}")
 
-                                @Suppress("DEPRECATION") val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    Notification.Builder(this@Avtorizathion, " ${it.record}")
+                                val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    NotificationCompat.Builder(this@Avtorizathion, " ${it.record}")
                                         .setSmallIcon(R.drawable.iconka)
                                         .setContentTitle("Уведомление")
                                         .setContentText("Изменения")
@@ -105,6 +107,7 @@ class Avtorizathion : AppCompatActivity() {
                                         .setPriority(Notification.PRIORITY_DEFAULT)
                                 } else {
                                     TODO("VERSION.SDK_INT < O")
+                                    return@onEach
                                 }
 
                                 with(NotificationManagerCompat.from(this@Avtorizathion)){
@@ -117,7 +120,8 @@ class Avtorizathion : AppCompatActivity() {
                                         // to handle the case where the user grants the permission. See the documentation
                                         // for ActivityCompat#requestPermissions for more details.
                                         notify(NOTIFICATION_SERVICE.length, builder.build())
-                                        //notify(changes.toString().length, builder.build())
+                                        return@with
+                                    //notify(changes.toString().length, builder.build())
                                     }
                                 }
 
