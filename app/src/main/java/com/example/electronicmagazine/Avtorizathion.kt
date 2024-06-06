@@ -1,6 +1,7 @@
 package com.example.electronicmagazine
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.content.Intent
@@ -20,11 +21,15 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.electronicmagazine.Class.User
 import com.example.electronicmagazine.Object.SB
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.realtime.createChannel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
@@ -34,13 +39,24 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 import java.lang.Exception
 class Avtorizathion : AppCompatActivity() {
-    @Suppress("DEPRECATION")
+    //@Suppress("DEPRECATION")
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_avtorizathion)
         val button: Button = findViewById(R.id.buttonEnter)
         val log: EditText = findViewById(R.id.login)
         val pass: EditText = findViewById(R.id.password)
+
+        val supabase = createSupabaseClient(
+            supabaseUrl = "https://eefpcpbldmzljygkugxt.supabase.co",
+            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlZnBjcGJsZG16bGp5Z2t1Z3h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDg5NTgxMTksImV4cCI6MjAyNDUzNDExOX0.P0eB4dN0mC-nvLokB-5ZVqw15vG5LiqlwnXXvJzbUbw"
+        ) {
+            install(GoTrue)
+            install(Postgrest)
+            install(Realtime)
+            //install other modules
+        }
 
         //Обработчик авторизации
         button.setOnClickListener {
@@ -87,7 +103,7 @@ class Avtorizathion : AppCompatActivity() {
                             }
 
 
-                            val channel = SB.getClient().realtime.createChannel("channelId2") {
+                            val channel = supabase.realtime.createChannel("channelId2") {
                                 //optional config
                             }
                             val changes = channel.postgresChangeFlow<PostgresAction.Update>(schema = "public") {
@@ -98,37 +114,49 @@ class Avtorizathion : AppCompatActivity() {
                                 println(it.record)
                                 Log.e("UPD:"," ${it.record}")
 
-                                val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    NotificationCompat.Builder(this@Avtorizathion, " ${it.record}")
-                                        .setSmallIcon(R.drawable.iconka)
-                                        .setContentTitle("Уведомление")
-                                        .setContentText("Изменения")
-                                        .setAutoCancel(true)
-                                        .setPriority(Notification.PRIORITY_DEFAULT)
-                                } else {
-                                    TODO("VERSION.SDK_INT < O")
-                                    return@onEach
-                                }
+                                val builder = NotificationCompat.Builder(this@Avtorizathion, " ${it.record}")
+                                    .setSmallIcon(R.drawable.iconka)
+                                    .setContentTitle("Уведомление")
+                                    .setContentText("Изменения")
+                                    .setAutoCancel(true)
+                                    .setPriority(Notification.PRIORITY_DEFAULT)
 
-                                with(NotificationManagerCompat.from(this@Avtorizathion)){
-                                    if (ActivityCompat.checkSelfPermission(this@Avtorizathion, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                                        // TODO: Consider calling
-                                        //    ActivityCompat#requestPermissions
-                                        // here to request the missing permissions, and then overriding
-                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                        //                                          int[] grantResults)
-                                        // to handle the case where the user grants the permission. See the documentation
-                                        // for ActivityCompat#requestPermissions for more details.
-                                        notify(NOTIFICATION_SERVICE.length, builder.build())
-                                        return@with
-                                    //notify(changes.toString().length, builder.build())
-                                    }
-                                }
+                                val notificationManager = NotificationManagerCompat.from(this@Avtorizathion)
+                                //notificationManager.notify(NOTIFICATION_SERVICE.length, builder.build())
+                                notificationManager.notify(0, builder.build())
+
+
+//                                val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                                    NotificationCompat.Builder(this@Avtorizathion, " ${it.record}")
+//                                        .setSmallIcon(R.drawable.iconka)
+//                                        .setContentTitle("Уведомление")
+//                                        .setContentText("Изменения")
+//                                        .setAutoCancel(true)
+//                                        .setPriority(Notification.PRIORITY_DEFAULT)
+//                                } else {
+//                                    TODO("VERSION.SDK_INT < O")
+//                                    return@onEach
+//                                }
+//
+//                                with(NotificationManagerCompat.from(this@Avtorizathion)){
+//                                    if (ActivityCompat.checkSelfPermission(this@Avtorizathion, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//                                        // TODO: Consider calling
+//                                        //    ActivityCompat#requestPermissions
+//                                        // here to request the missing permissions, and then overriding
+//                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                        //                                          int[] grantResults)
+//                                        // to handle the case where the user grants the permission. See the documentation
+//                                        // for ActivityCompat#requestPermissions for more details.
+//                                        notify(NOTIFICATION_SERVICE.length, builder.build())
+//                                        return@with
+//                                    //notify(changes.toString().length, builder.build())
+//                                    }
+//                                }
 
 
                             //Toast.makeText(applicationContext, "${it.record}", Toast.LENGTH_LONG).show()
                             }.launchIn(yourCoroutineScope)
-                            SB.getClient().realtime.connect()
+                            supabase.realtime.connect()
                             channel.join()
                             //Если произошла ошибка
                         }catch (ex: Exception){
