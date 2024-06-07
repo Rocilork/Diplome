@@ -60,17 +60,21 @@ class Curator2 : AppCompatActivity() {
 
         //Корутина
         lifecycleScope.launch {
-            val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
+            //val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
+            val columns = Columns.raw("""ID_оценки, Оценка_НБ""".trimIndent())
             val users = SB.getClient().postgrest["Оценки"].select(columns = columns)
             {
-                intent.getStringExtra("itemText")?.let { eq("ID_оценки", intent.getStringExtra("itemText")!!) }
-                intent.getStringExtra("itemTextID")?.let { eq("id_студента", intent.getStringExtra("itemTextID")!!) }
+                //intent.getStringExtra("itemText")?.let { eq("ID_оценки", intent.getStringExtra("itemText")!!) }
+                //intent.getStringExtra("itemTextID")?.let { eq("id_студента (ФИО)", intent.getStringExtra("itemTextID")!!) }
                 intent.getStringExtra("itemTextEst")?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
             }.decodeSingle<Estimation2>()
 
-            textID.setText(users.id_студента)
+            //textID.setText(users.id_студента)
             estN_B.setText(users.Оценка_НБ)
         }
+
+        textID.text = intent.getStringExtra("itemTextID")
+        //estN_B.text = intent.getStringExtra("itemTextID")
 
 //        val items = arrayOf("Стандартизация", "Разработка баз данных")
 //        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
@@ -172,7 +176,8 @@ class Curator2 : AppCompatActivity() {
 //                }
 //                Log.e("!!!", city.body.toString())
 
-                val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
+                //val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
+                val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента (ФИО)""".trimIndent())
                 val city4 = SB.getClient().postgrest["Оценки"].select(columns = columns4) {
                     //eq("id_студента", city.body.toString())
                     //city.body.toString()
@@ -187,10 +192,10 @@ class Curator2 : AppCompatActivity() {
                     for (i in 0 until array.length()) {
                         val item = array.getJSONObject(i)
                         val ID_оценки = item.getInt("ID_оценки")
-                        val id_студента = item.getString("id_студента")
                         val Оценка_НБ = item.getString("Оценка_НБ")
-                        //val ФИО = id_студента.getString("ID_студента")
-                        val api = Estimation2(ID_оценки, id_студента, Оценка_НБ)
+                        val id_студента = item.getJSONObject("id_студента")
+                        val ФИО = id_студента.getString("ФИО")
+                        val api = Estimation2(ID_оценки, ФИО, Оценка_НБ)
                         viewItems3.add(api)
                     }
                 } catch (e: JSONException) {

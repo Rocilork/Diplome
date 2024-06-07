@@ -86,9 +86,10 @@ class Curator : AppCompatActivity() {
         }
 
         //Выпадающий список групп
-        //        val items = arrayOf("Стандартизация", "Разработка баз данных")
-        //val items = arrayListOf(viewItems2)
+                //val items = arrayOf("Стандартизация", "Разработка баз данных")
+        //val items = arrayListOf(viewItems2.toList())
         //val items = viewItems2.toString()
+        //val items = listOf(viewItems2)
         val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
         arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinGroup.adapter = arrayAdapter2
@@ -99,6 +100,7 @@ class Curator : AppCompatActivity() {
                 //recyclerView.adapter = spinGroup[p2]
                 //recyclerView.adapter = Adapter_Curator(viewItems2)
                 //spinGroup.textAlignment = selectG.toString().length
+
 
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -130,7 +132,6 @@ class Curator : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список предметов
-
         val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinItem.adapter = arrayAdapter
@@ -159,7 +160,7 @@ class Curator : AppCompatActivity() {
 //                //Получаем только студентов
 //                Log.e("!!!", city.body.toString())
 
-                val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
+                val columns4 = Columns.raw("""ID_оценки, Оценка_НБ, id_студента (ФИО)""".trimIndent())
                 val city4 = SB.getClient().postgrest["Оценки"].select(columns = columns4){
                     //eq("id_студента", city.body.toString())
                     //city.body.toString()
@@ -175,10 +176,10 @@ class Curator : AppCompatActivity() {
                     for(i in 0 until   array.length()){
                         val item = array.getJSONObject(i)
                         val ID_оценки = item.getInt("ID_оценки")
-                        val id_студента = item.getString("id_студента")
                         val Оценка_НБ = item.getString("Оценка_НБ")
-                        //val ФИО = id_студента.getString("ID_студента")
-                        val api = Estimation2(ID_оценки, id_студента, Оценка_НБ)
+                        val id_студента = item.getJSONObject("id_студента")
+                        val ФИО = id_студента.getString("ФИО")
+                        val api = Estimation2(ID_оценки, ФИО, Оценка_НБ)
                         viewItems3.add(api)
                     }
                 }catch (e: JSONException){
