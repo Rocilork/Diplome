@@ -16,28 +16,20 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.electronicmagazine.Adapter.Adapter_FIO_Curator
 import com.example.electronicmagazine.Adapter.Adapter_FIO_Student
 import com.example.electronicmagazine.Class.ClassGroups
-import com.example.electronicmagazine.Class.GroupClass
-import com.example.electronicmagazine.Class.Items
-import com.example.electronicmagazine.Class.Speciality
 import com.example.electronicmagazine.Class.User
-import com.example.electronicmagazine.Class.UserCurators
 import com.example.electronicmagazine.Object.SB
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.gotrue.providers.builtin.Email
-import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
 
 class CreateEditGroup : AppCompatActivity() {
-    val viewItems = ArrayList<UserCurators>()
-    val viewItems2 = ArrayList<Speciality>()
+    val viewItems = ArrayList<String>()
+    val viewItems2 = ArrayList<String>()
     val viewItems3 = ArrayList<User>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +63,7 @@ class CreateEditGroup : AppCompatActivity() {
                     for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val ФИО: String = itemObj.getString("ФИО")
-                        val api = UserCurators(ФИО)
-                        viewItems.add(api)
+                        viewItems.add(ФИО)
                     }
                 } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
@@ -110,8 +101,7 @@ class CreateEditGroup : AppCompatActivity() {
                     for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
-                        val api = Speciality(Название)
-                        viewItems2.add(api)
+                        viewItems2.add(Название)
                     }
                 } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())

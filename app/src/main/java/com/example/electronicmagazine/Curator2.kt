@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,14 +20,8 @@ import com.example.electronicmagazine.Adapter.Adapter_Curator
 import com.example.electronicmagazine.Adapter.Adapter_DateCurator
 import com.example.electronicmagazine.Class.DateEstimation
 import com.example.electronicmagazine.Class.Estimation2
-import com.example.electronicmagazine.Class.GroupClass
-import com.example.electronicmagazine.Class.Items
-import com.example.electronicmagazine.Class.User
 import com.example.electronicmagazine.Object.SB
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
-import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
@@ -36,8 +29,8 @@ import org.json.JSONArray
 import org.json.JSONException
 
 class Curator2 : AppCompatActivity() {
-    val viewItems = ArrayList<Items>()
-    val viewItems2 = ArrayList<GroupClass>()
+    val viewItems = ArrayList<String>()
+    val viewItems2 = ArrayList<String>()
     val viewItems3 = ArrayList<Estimation2>()
     val viewItems4 = ArrayList<DateEstimation>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,8 +88,7 @@ class Curator2 : AppCompatActivity() {
                     for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
-                        val api = GroupClass(Название)
-                        viewItems2.add(api)
+                        viewItems2.add(Название)
                     }
                 } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())
@@ -137,8 +129,7 @@ class Curator2 : AppCompatActivity() {
                     for (i in 0 until array.length()) {
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
-                        val api = Items(Название)
-                        viewItems.add(api)
+                        viewItems.add(Название)
                     }
                 } catch (e: JSONException) {
                     Log.e("!!!", e.message.toString())

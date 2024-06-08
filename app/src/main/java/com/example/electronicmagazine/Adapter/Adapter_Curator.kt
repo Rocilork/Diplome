@@ -5,13 +5,10 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.electronicmagazine.Class.Estimation2
-import com.example.electronicmagazine.Class.Items
 import com.example.electronicmagazine.Curator2
-import com.example.electronicmagazine.ListCurators2
 import com.example.electronicmagazine.R
 
 class Adapter_Curator(val api: ArrayList<Estimation2>, val context: Context): RecyclerView.Adapter<Adapter_Curator.MyViewHolder>() {

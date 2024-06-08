@@ -11,24 +11,15 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.electronicmagazine.Adapter.Adapter_Curator
 import com.example.electronicmagazine.Adapter.Adapter_DateCurator
-import com.example.electronicmagazine.Adapter.Adapter_Student
 import com.example.electronicmagazine.Class.DateEstimation
-import com.example.electronicmagazine.Class.Estimation
 import com.example.electronicmagazine.Class.Estimation2
-import com.example.electronicmagazine.Class.GroupClass
-import com.example.electronicmagazine.Class.Items
-import com.example.electronicmagazine.Class.User
 import com.example.electronicmagazine.Object.SB
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.gotrue.gotrue
-import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
@@ -37,8 +28,8 @@ import org.json.JSONException
 import kotlin.Exception
 
 class Curator : AppCompatActivity() {
-    val viewItems = ArrayList<Items>()
-    val viewItems2 = ArrayList<GroupClass>()
+    val viewItems = ArrayList<String>()
+    val viewItems2 = ArrayList<String>()
     val viewItems3 = ArrayList<Estimation2>()
     val viewItems4 = ArrayList<DateEstimation>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,8 +65,7 @@ class Curator : AppCompatActivity() {
                     for(i in 0 until   array.length()){
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
-                        val api = GroupClass(Название)
-                        viewItems2.add(api)
+                        viewItems2.add(Название)
                     }
                 }catch (e: JSONException){
                     Log.e("!!!", e.message.toString())
@@ -86,10 +76,6 @@ class Curator : AppCompatActivity() {
         }
 
         //Выпадающий список групп
-                //val items = arrayOf("Стандартизация", "Разработка баз данных")
-        //val items = arrayListOf(viewItems2.toList())
-        //val items = viewItems2.toString()
-        //val items = listOf(viewItems2)
         val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
         arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinGroup.adapter = arrayAdapter2
@@ -121,8 +107,7 @@ class Curator : AppCompatActivity() {
                     for(i in 0 until   array.length()){
                         val itemObj = array.getJSONObject(i)
                         val Название: String = itemObj.getString("Название")
-                        val api = Items(Название)
-                        viewItems.add(api)
+                        viewItems.add(Название)
                     }
                 }catch (e: JSONException){
                     Log.e("!!!", e.message.toString())
@@ -142,7 +127,6 @@ class Curator : AppCompatActivity() {
                 //recyclerView.adapter = spinItem[p2]
                 //recyclerView.adapter = Adapter_Curator(viewItems)
 
-                //spinItem.adapter = arrayAdapter
 
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {

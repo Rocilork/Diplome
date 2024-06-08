@@ -7,9 +7,10 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.electronicmagazine.Class.GroupClass
 import com.example.electronicmagazine.Object.SB
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
@@ -17,12 +18,14 @@ import org.json.JSONArray
 import org.json.JSONException
 
 class Groups : AppCompatActivity() {
-    val viewItems = ArrayList<GroupClass>()
+    val viewItems = ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_groups)
 
         val spinGroup: Spinner = findViewById(R.id.group)
+        val butDel: Button = findViewById(R.id.buttonDelete)
+        val butEd: Button = findViewById(R.id.buttonEdite)
 
         //Получаем группы
         try {
@@ -38,8 +41,7 @@ class Groups : AppCompatActivity() {
                         val itemObj = array.getJSONObject(i)
                         //val ID_предмета: Int = itemObj.getInt("ID_группы")
                         val Название: String = itemObj.getString("Название")
-                        val api = GroupClass(Название)
-                        viewItems.add(api)
+                        viewItems.add(Название)
                     }
                 }catch (e: JSONException){
                     Log.e("!!!", e.message.toString())
@@ -56,11 +58,34 @@ class Groups : AppCompatActivity() {
         spinGroup.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                TODO("Not yet implemented")
+
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
+        }
+
+        butDel.setOnClickListener {
+            val sG = spinGroup.textAlignment.toString()
+            lifecycleScope.launch {
+                try {
+                    //Удаляем пользователя из таблицы
+                    SB.getClient().postgrest["Группы"].delete {
+                        eq("Название", sG)
+                    }
+                    //Получаем уведомление
+                    Toast.makeText(applicationContext, "Группа удалена!", Toast.LENGTH_SHORT).show()
+
+                    startActivity(intent)
+                }catch (ex: JSONException){
+                    Log.e("!!!", ex.message.toString())
+                }
+            }
+        }
+
+        butEd.setOnClickListener {
+            val sG = spinGroup.textAlignment.toString()
+
         }
     }
 
