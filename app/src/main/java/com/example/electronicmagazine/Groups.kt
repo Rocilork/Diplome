@@ -85,7 +85,8 @@ class Groups : AppCompatActivity() {
 
         butEd.setOnClickListener {
             val sG = spinGroup.textAlignment.toString()
-
+            val intent = Intent(this, CreateEditGroup::class.java)
+            startActivity(intent)
         }
     }
 
