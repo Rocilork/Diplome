@@ -1,5 +1,6 @@
 package com.example.electronicmagazine
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -265,7 +267,12 @@ class Curator2 : AppCompatActivity() {
             if (est != two.toString() && est != three.toString() && est != four.toString() && est != five.toString() && est != NB.toString() || est == "") {
                 Toast.makeText(applicationContext, "Корректные: 2, 3, 4, 5, Н/Б.", Toast.LENGTH_SHORT).show()
             } else {
-                lifecycleScope.launch {
+                val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                builder.setMessage("Вы уверены, что хотите выставить успеваемость?")
+                builder.setTitle(android.R.string.dialog_alert_title)
+                builder.setIcon(R.drawable.iconka)
+                builder.setPositiveButton("Да",
+                    DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
                     try {
                         val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
                         SB.getClient().postgrest["Оценки"].update(
@@ -284,6 +291,13 @@ class Curator2 : AppCompatActivity() {
                         Log.e("!!!", ex.message.toString())
                     }
                 }
+                    })
+                //кнопка Нет и обработчик событий
+                builder.setNegativeButton("Нет",
+                    DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                builder.setCancelable(false)
+                builder.create()
+                builder.show()
             }
         }
     }

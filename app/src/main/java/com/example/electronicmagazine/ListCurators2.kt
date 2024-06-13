@@ -82,24 +82,35 @@ class ListCurators2 : AppCompatActivity() {
             val fioR = edit_FIO.text.toString()
             val intent = Intent(this, ListCurators::class.java)
 
-            //openDialog()
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setMessage("Вы уверены, что хотите удалить?")
+            builder.setTitle(android.R.string.dialog_alert_title)
+            builder.setIcon(R.drawable.iconka)
+            //кнопка Да и обработчик событий
+            builder.setPositiveButton("Да",
+                DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                        try {
+                            //Удаляем пользователя из таблицы
+                            SB.getClient().postgrest["Пользователь"].delete {
+                                eq("ФИО", fioR)
+                            }
+                            //Очищаем текстовое поле
+                            edit_FIO.text.clear()
+                            //Получаем уведомление
+                            Toast.makeText(applicationContext, "Куратор удалён!", Toast.LENGTH_SHORT).show()
 
-            lifecycleScope.launch {
-                try {
-                    //Удаляем пользователя из таблицы
-                    SB.getClient().postgrest["Пользователь"].delete {
-                        eq("ФИО", fioR)
+                            startActivity(intent)
+                        }catch (ex: JSONException){
+                            Log.e("!!!", ex.message.toString())
+                        }
                     }
-                    //Очищаем текстовое поле
-                    edit_FIO.text.clear()
-                    //Получаем уведомление
-                    Toast.makeText(applicationContext, "Куратор удалён!", Toast.LENGTH_SHORT).show()
-
-                    startActivity(intent)
-                }catch (ex: JSONException){
-                    Log.e("!!!", ex.message.toString())
-                }
-            }
+                })
+            //кнопка Нет и обработчик событий
+            builder.setNegativeButton("Нет",
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            builder.setCancelable(false)
+            builder.create()
+            builder.show()
         }
 
         //сохранить
@@ -107,27 +118,40 @@ class ListCurators2 : AppCompatActivity() {
             val fioR = edit_FIO.text.toString()
             val intent = Intent(this, ListCurators::class.java)
 
-            lifecycleScope.launch {
-                try {
-                    //Запоминаем сессию выбранного пользователя
-                    val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
-                    //Обновляем данные пользователя в таблице
-                    SB.getClient().postgrest["Пользователь"].update(
-                        {
-                            set("ФИО", fioR)
-                        }
-                    ) {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setMessage("Вы уверены, что хотите изменить?")
+            builder.setTitle(android.R.string.dialog_alert_title)
+            builder.setIcon(R.drawable.iconka)
+            //кнопка Да и обработчик событий
+            builder.setPositiveButton("Да",
+                DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                    try {
+                        //Запоминаем сессию выбранного пользователя
+                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                        //Обновляем данные пользователя в таблице
+                        SB.getClient().postgrest["Пользователь"].update(
+                            {
+                                set("ФИО", fioR)
+                            }
+                        ) {
                             eq("ID_пользователя", userId)
+                        }
+                        //Очищаем текстовое поле
+                        edit_FIO.text.clear()
+                        //Получаем уведомление
+                        Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT).show()
+                        startActivity(intent)
+                    }catch (ex: JSONException){
+                        Log.e("!!!", ex.message.toString())
                     }
-                    //Очищаем текстовое поле
-                    edit_FIO.text.clear()
-                    //Получаем уведомление
-                    Toast.makeText(applicationContext, "Изменения сохранены!", Toast.LENGTH_SHORT).show()
-                    startActivity(intent)
-                }catch (ex: JSONException){
-                    Log.e("!!!", ex.message.toString())
                 }
-            }
+                })
+            //кнопка Нет и обработчик событий
+            builder.setNegativeButton("Нет",
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            builder.setCancelable(false)
+            builder.create()
+            builder.show()
         }
 
         //Получаем кураторов
@@ -177,21 +201,5 @@ class ListCurators2 : AppCompatActivity() {
     fun onBack (view: View){
         val intent = Intent(this, Administrator::class.java)
         startActivity(intent)
-    }
-    private fun openDialog() {
-        //val builder: AlertDialog.Builder = Builder(this)
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setMessage("Вы уверены, что хотите удалить?")
-        builder.setTitle(android.R.string.dialog_alert_title)
-        builder.setIcon(R.drawable.iconka)
-        //кнопка Да и обработчик событий
-        builder.setPositiveButton("Да",
-            DialogInterface.OnClickListener { dialog, id -> this.finish() })
-        //кнопка Нет и обработчик событий
-        builder.setNegativeButton("Нет",
-            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-        builder.setCancelable(false)
-        builder.create()
-        builder.show()
     }
 }

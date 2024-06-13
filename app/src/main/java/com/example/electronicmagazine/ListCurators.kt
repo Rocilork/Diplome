@@ -1,5 +1,6 @@
 package com.example.electronicmagazine
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,6 +60,7 @@ class ListCurators : AppCompatActivity() {
             val pasR = edit_Pas.text.toString()
 
             val rol: Int = 2
+
             try {
                 if(fioR == "" || logR == "" || pasR == ""){
                     Toast.makeText(applicationContext, "Поля не все заполнены!", Toast.LENGTH_SHORT).show()
@@ -66,19 +69,36 @@ class ListCurators : AppCompatActivity() {
                 } else if(logR.toBoolean() == logR.isEmailValid()){
                     Toast.makeText(applicationContext, "Почта некорректна!", Toast.LENGTH_SHORT).show()
                 } else{
-                    lifecycleScope.launch {
-                        val user = SB.getClient().gotrue.signUpWith(Email) {
-                            email = logR
-                            password = pasR
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder.setMessage("Вы уверены, что хотите добавить?")
+                    builder.setTitle(android.R.string.dialog_alert_title)
+                    builder.setIcon(R.drawable.iconka)
+                    //кнопка Да и обработчик событий
+                    builder.setPositiveButton("Да",
+                        DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                            try {
+                                val user = SB.getClient().gotrue.signUpWith(Email) {
+                                    email = logR
+                                    password = pasR
+                                }
+
+                                val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                                val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
+                                SB.getClient().postgrest["Пользователь"].insert(city)
+
+                                Toast.makeText(applicationContext, "Куратор зарегистрирован!", Toast.LENGTH_SHORT).show()
+                                startActivity(intent)
+                            }catch (ex: JSONException){
+                                Log.e("!!!", ex.message.toString())
+                            }
                         }
-
-                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
-                        val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
-                        SB.getClient().postgrest["Пользователь"].insert(city)
-
-                        Toast.makeText(applicationContext, "Куратор зарегистрирован!", Toast.LENGTH_SHORT).show()
-                        startActivity(intent)
-                    }
+                        })
+                    //кнопка Нет и обработчик событий
+                    builder.setNegativeButton("Нет",
+                        DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                    builder.setCancelable(false)
+                    builder.create()
+                    builder.show()
                 }
             }catch (ex: JSONException) {
                 Log.e("!!!", ex.message.toString())

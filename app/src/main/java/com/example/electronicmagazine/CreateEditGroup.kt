@@ -1,5 +1,6 @@
 package com.example.electronicmagazine
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -185,19 +187,35 @@ class CreateEditGroup : AppCompatActivity() {
                 } else if(logR.toBoolean() == logR.isEmailValid()){
                     Toast.makeText(applicationContext, "Почта некорректна!", Toast.LENGTH_SHORT).show()
                 } else{
-                    lifecycleScope.launch {
-                        val user = SB.getClient().gotrue.signUpWith(Email) {
-                            email = logR
-                            password = pasR
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder.setMessage("Вы уверены, что хотите добавить?")
+                    builder.setTitle(android.R.string.dialog_alert_title)
+                    builder.setIcon(R.drawable.iconka)
+                    builder.setPositiveButton("Да",
+                        DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                            try {
+                                val user = SB.getClient().gotrue.signUpWith(Email) {
+                                    email = logR
+                                    password = pasR
+                                }
+
+                                val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
+                                val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
+                                SB.getClient().postgrest["Пользователь"].insert(city)
+
+                                Toast.makeText(applicationContext, "Студент добавлен!", Toast.LENGTH_SHORT).show()
+                                startActivity(intent)
+                            } catch (ex: JSONException) {
+                                Log.e("!!!", ex.message.toString())
+                            }
                         }
-
-                        val userId = SB.getClient().gotrue.retrieveUserForCurrentSession(updateSession = true).id
-                        val city = User(ID_пользователя = userId, ФИО = fioR, id_роли = rol)
-                        SB.getClient().postgrest["Пользователь"].insert(city)
-
-                        Toast.makeText(applicationContext, "Студент добавлен!", Toast.LENGTH_SHORT).show()
-                        startActivity(intent)
-                    }
+                        })
+                    //кнопка Нет и обработчик событий
+                    builder.setNegativeButton("Нет",
+                        DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                    builder.setCancelable(false)
+                    builder.create()
+                    builder.show()
                 }
             }catch (ex: JSONException){
                 Log.e("!!!", ex.message.toString())
@@ -215,13 +233,29 @@ class CreateEditGroup : AppCompatActivity() {
                 if(groupR == "" || spC == "" || spS == toString().length){
                     Toast.makeText(applicationContext, "Не всё заполнено!", Toast.LENGTH_SHORT).show()
                 }else{
-                    lifecycleScope.launch {
-                        //val city = ClassGroups(ID_группы = 0, Название = groupR, id_специальности = spS, id_пользователя = spC)
-                        val city = ClassGroups(ID_группы = 0, Название = groupR,)
-                        SB.getClient().postgrest["Группы"].insert(city)
-                        Toast.makeText(applicationContext, "Группа создана!", Toast.LENGTH_SHORT).show()
-                        startActivity(intent)
-                    }
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+                    builder.setMessage("Вы уверены, что хотите сохранить?")
+                    builder.setTitle(android.R.string.dialog_alert_title)
+                    builder.setIcon(R.drawable.iconka)
+                    builder.setPositiveButton("Да",
+                        DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                            try {
+                                //val city = ClassGroups(ID_группы = 0, Название = groupR, id_специальности = spS, id_пользователя = spC)
+                                val city = ClassGroups(ID_группы = 0, Название = groupR,)
+                                SB.getClient().postgrest["Группы"].insert(city)
+                                Toast.makeText(applicationContext, "Группа создана!", Toast.LENGTH_SHORT).show()
+                                startActivity(intent)
+                            } catch (ex: JSONException) {
+                                Log.e("!!!", ex.message.toString())
+                            }
+                        }
+                        })
+                    //кнопка Нет и обработчик событий
+                    builder.setNegativeButton("Нет",
+                        DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                    builder.setCancelable(false)
+                    builder.create()
+                    builder.show()
                 }
             }catch (ex: JSONException){
                 Log.e("!!!", ex.message.toString())

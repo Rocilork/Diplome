@@ -1,5 +1,6 @@
 package com.example.electronicmagazine
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +11,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.electronicmagazine.Object.SB
+import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -64,30 +67,80 @@ class Groups : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
         }
-
+        //удалить
         butDel.setOnClickListener {
             val sG = spinGroup.textAlignment.toString()
-            lifecycleScope.launch {
-                try {
-                    //Удаляем пользователя из таблицы
-                    SB.getClient().postgrest["Группы"].delete {
-                        eq("Название", sG)
+
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setMessage("Вы уверены, что хотите удалить?")
+            builder.setTitle(android.R.string.dialog_alert_title)
+            builder.setIcon(R.drawable.iconka)
+            //кнопка Да и обработчик событий
+            builder.setPositiveButton("Да",
+                DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                    try {
+                        //Удаляем группу из таблицы
+                        SB.getClient().postgrest["Группы"].delete {
+                            eq("Название", sG)
+                        }
+                        Toast.makeText(applicationContext, "Группа удалена!", Toast.LENGTH_SHORT).show()
+
+                        startActivity(intent)
+                    }catch (ex: JSONException){
+                        Log.e("!!!", ex.message.toString())
                     }
-                    //Получаем уведомление
-                    Toast.makeText(applicationContext, "Группа удалена!", Toast.LENGTH_SHORT).show()
-
-                    startActivity(intent)
-                }catch (ex: JSONException){
-                    Log.e("!!!", ex.message.toString())
                 }
-            }
+                })
+            //кнопка Нет и обработчик событий
+            builder.setNegativeButton("Нет",
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            builder.setCancelable(false)
+            builder.create()
+            builder.show()
         }
-
+        //изменить
         butEd.setOnClickListener {
             val sG = spinGroup.textAlignment.toString()
             val intent = Intent(this, CreateEditGroup::class.java)
-            startActivity(intent)
+
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setMessage("Вы уверены, что хотите изменить?")
+            builder.setTitle(android.R.string.dialog_alert_title)
+            builder.setIcon(R.drawable.iconka)
+            //кнопка Да и обработчик событий
+            builder.setPositiveButton("Да",
+                DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
+                    try {
+                        startActivity(intent)
+                    }catch (ex: JSONException){
+                        Log.e("!!!", ex.message.toString())
+                    }
+                }
+                })
+            //кнопка Нет и обработчик событий
+            builder.setNegativeButton("Нет",
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+            builder.setCancelable(false)
+            builder.create()
+            builder.show()
         }
+    }
+
+    private fun openDialog() {
+        //val builder: AlertDialog.Builder = Builder(this)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setMessage("Вы уверены, что хотите удалить?")
+        builder.setTitle(android.R.string.dialog_alert_title)
+        builder.setIcon(R.drawable.iconka)
+        //кнопка Да и обработчик событий
+        builder.setPositiveButton("Да",
+            DialogInterface.OnClickListener { dialog, id -> this.finish() })
+        //кнопка Нет и обработчик событий
+        builder.setNegativeButton("Нет",
+            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        builder.setCancelable(false)
+        builder.create()
+        builder.show()
     }
 
     fun onBack (view: View){
