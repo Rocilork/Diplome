@@ -59,8 +59,8 @@ class ListCurators2 : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView_curator)
 
         val edit_FIO: EditText = findViewById(R.id.FIO_curator)
-        //val edit_Log: EditText = findViewById(R.id.login_curator)
-        //val edit_Pas: EditText =findViewById(R.id.password_curator)
+        val edit_Log: EditText = findViewById(R.id.login_curator)
+        val edit_Pas: EditText =findViewById(R.id.password_curator)
 
         //Корутина
         lifecycleScope.launch {
@@ -72,9 +72,6 @@ class ListCurators2 : AppCompatActivity() {
             }.decodeSingle<User>()
             //Получаем данные пользователя в текстовом поле
             edit_FIO.setText(users.ФИО)
-            //edit_FIO.text.clear()
-            //edit_Log.setText(session_user.email)
-            //edit_Pas.setText(session_user.pass)
         }
 
         //удаление

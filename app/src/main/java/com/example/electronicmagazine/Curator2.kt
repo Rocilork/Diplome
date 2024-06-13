@@ -55,25 +55,14 @@ class Curator2 : AppCompatActivity() {
 
         //Корутина
         lifecycleScope.launch {
-            //val columns = Columns.raw("""ID_оценки, Оценка_НБ, id_студента""".trimIndent())
             val columns = Columns.raw("""ID_оценки, Оценка_НБ""".trimIndent())
             val users = SB.getClient().postgrest["Оценки"].select(columns = columns)
             {
-                //intent.getStringExtra("itemText")?.let { eq("ID_оценки", intent.getStringExtra("itemText")!!) }
-                //intent.getStringExtra("itemTextID")?.let { eq("id_студента (ФИО)", intent.getStringExtra("itemTextID")!!) }
                 intent.getStringExtra("itemTextEst")?.let { eq("Оценка_НБ", intent.getStringExtra("itemTextEst")!!) }
             }.decodeSingle<Estimation2>()
-
-            //textID.setText(users.id_студента)
             estN_B.setText(users.Оценка_НБ)
         }
-
         textID.text = intent.getStringExtra("itemTextID")
-        //estN_B.text = intent.getStringExtra("itemTextID")
-
-//        val items = arrayOf("Стандартизация", "Разработка баз данных")
-//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-//        spinItem.adapter = arrayAdapter
 
         //Получаем группы
         try {

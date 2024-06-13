@@ -47,10 +47,6 @@ class Curator : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         val recyclerViewDate: RecyclerView = findViewById(R.id.recyclerViewDate)
 
-//        val items = arrayOf("Стандартизация", "Разработка баз данных")
-//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, items)
-//        spinItem.adapter = arrayAdapter
-
         //Получаем группы
         try {
             lifecycleScope.launch {

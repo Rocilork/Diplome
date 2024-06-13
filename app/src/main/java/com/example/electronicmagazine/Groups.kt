@@ -125,24 +125,6 @@ class Groups : AppCompatActivity() {
             builder.show()
         }
     }
-
-    private fun openDialog() {
-        //val builder: AlertDialog.Builder = Builder(this)
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setMessage("Вы уверены, что хотите удалить?")
-        builder.setTitle(android.R.string.dialog_alert_title)
-        builder.setIcon(R.drawable.iconka)
-        //кнопка Да и обработчик событий
-        builder.setPositiveButton("Да",
-            DialogInterface.OnClickListener { dialog, id -> this.finish() })
-        //кнопка Нет и обработчик событий
-        builder.setNegativeButton("Нет",
-            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
-        builder.setCancelable(false)
-        builder.create()
-        builder.show()
-    }
-
     fun onBack (view: View){
         val intent = Intent(this, Administrator::class.java)
         startActivity(intent)
