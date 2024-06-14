@@ -91,4 +91,8 @@ class Student : AppCompatActivity() {
         val intent = Intent(this, Avtorizathion::class.java)
         startActivity(intent)
     }
+    fun onProfil (view: View){
+        val intent = Intent(this, Profil::class.java)
+        startActivity(intent)
+    }
 }

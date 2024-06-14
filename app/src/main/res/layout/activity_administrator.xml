@@ -36,6 +36,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
+            android:text="Профиль"
+            android:onClick="onProfil"
+            android:background="@drawable/radius"
+            app:backgroundTint="@null"
+            android:layout_gravity="center"
+            android:layout_marginVertical="20dp"
+            android:layout_marginHorizontal="40dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
             android:text="Список кураторов"
             android:onClick="onListCurators"
             android:background="@drawable/radius"
