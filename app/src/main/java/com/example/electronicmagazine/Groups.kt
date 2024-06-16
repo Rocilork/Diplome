@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
@@ -26,7 +27,7 @@ class Groups : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_groups)
 
-        val spinGroup: Spinner = findViewById(R.id.group)
+        val spinGroup: AutoCompleteTextView = findViewById(R.id.group)
         val butDel: Button = findViewById(R.id.buttonDelete)
         val butEd: Button = findViewById(R.id.buttonEdite)
 
@@ -54,9 +55,25 @@ class Groups : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список групп
-        val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinGroup.adapter = arrayAdapter2
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, viewItems)
+        spinGroup.setAdapter(adapter)
+
+        spinGroup.threshold=0
+
+        spinGroup.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+            Toast.makeText(applicationContext, "Группа: $selectedItem", Toast.LENGTH_SHORT).show()
+        }
+
+        spinGroup.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                spinGroup.showDropDown()
+            }
+        }
+
+//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
+//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinGroup.adapter = arrayAdapter
 
         spinGroup.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener{

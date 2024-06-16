@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -37,8 +38,8 @@ class CreateEditGroup : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_edit_group)
 
-        val spinCurator: Spinner = findViewById(R.id.curator)
-        val spinSpeciality: Spinner = findViewById(R.id.speciality)
+        val spinCurator: AutoCompleteTextView = findViewById(R.id.curator)
+        val spinSpeciality: AutoCompleteTextView = findViewById(R.id.speciality)
 
         val groupName: EditText = findViewById(R.id.nameGroup)
         val edit_FIO: EditText = findViewById(R.id.FIO_student)
@@ -75,9 +76,24 @@ class CreateEditGroup : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список кураторов
-        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinCurator.adapter = arrayAdapter
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, viewItems)
+        spinCurator.setAdapter(adapter)
+
+        spinCurator.threshold=0
+
+        spinCurator.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+            Toast.makeText(applicationContext, "Куратор: $selectedItem", Toast.LENGTH_SHORT).show()
+        }
+
+        spinCurator.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                spinCurator.showDropDown()
+            }
+        }
+//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
+//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinCurator.adapter = arrayAdapter
 
         spinCurator.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -113,9 +129,25 @@ class CreateEditGroup : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список специальностей
-        val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinSpeciality.adapter = arrayAdapter2
+        val adapter2 = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, viewItems2)
+        spinSpeciality.setAdapter(adapter2)
+
+        spinSpeciality.threshold=0
+
+        spinSpeciality.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+            Toast.makeText(applicationContext, "Специальность: $selectedItem", Toast.LENGTH_SHORT).show()
+        }
+
+        spinSpeciality.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                spinSpeciality.showDropDown()
+            }
+        }
+
+//        val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
+//        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinSpeciality.adapter = arrayAdapter2
 
         spinSpeciality.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -241,7 +273,7 @@ class CreateEditGroup : AppCompatActivity() {
                         DialogInterface.OnClickListener { dialog, id -> this.lifecycleScope.launch {
                             try {
                                 //val city = ClassGroups(ID_группы = 0, Название = groupR, id_специальности = spS, id_пользователя = spC)
-                                val city = ClassGroups(ID_группы = 0, Название = groupR,)
+                                val city = ClassGroups(ID_группы = 0, Название = groupR)
                                 SB.getClient().postgrest["Группы"].insert(city)
                                 Toast.makeText(applicationContext, "Группа создана!", Toast.LENGTH_SHORT).show()
                                 startActivity(intent)

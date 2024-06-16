@@ -53,25 +53,34 @@
             android:inputType="text"
             android:layout_marginBottom="20dp"/>
 
-        <Spinner
+        <AutoCompleteTextView
             android:id="@+id/curator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:inputType="none"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
             android:background="@drawable/spinner"/>
 
-        <Spinner
+        <AutoCompleteTextView
             android:id="@+id/speciality"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:inputType="none"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
             android:background="@drawable/spinner"/>
     </LinearLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -174,4 +183,6 @@
             android:background="@drawable/radius"
             app:backgroundTint="@null" />
     </LinearLayout>
+</LinearLayout>
+    </ScrollView>
 </LinearLayout>

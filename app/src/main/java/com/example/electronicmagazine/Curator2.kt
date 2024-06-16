@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -39,8 +40,8 @@ class Curator2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_curator2)
 
-        val spinGroup: Spinner = findViewById(R.id.group)
-        val spinItem: Spinner = findViewById(R.id.item)
+        val spinGroup: AutoCompleteTextView = findViewById(R.id.group)
+        val spinItem: AutoCompleteTextView = findViewById(R.id.item)
 
         val buttonBack: Button = findViewById(R.id.ButtonBack)
         val buttonForward: Button = findViewById(R.id.ButtonForward)
@@ -89,9 +90,25 @@ class Curator2 : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список групп
-        val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
-        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinGroup.adapter = arrayAdapter2
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, viewItems2)
+        spinGroup.setAdapter(adapter)
+
+        spinGroup.threshold=0
+
+        spinGroup.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+            Toast.makeText(applicationContext, "Группа: $selectedItem", Toast.LENGTH_SHORT).show()
+        }
+
+        spinGroup.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                spinGroup.showDropDown()
+            }
+        }
+
+//        val arrayAdapter2 = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems2)
+//        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinGroup.adapter = arrayAdapter2
 
         spinGroup.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
@@ -130,9 +147,25 @@ class Curator2 : AppCompatActivity() {
             Log.e("!!!", ex.toString())
         }
         //Выпадающий список предметов
-        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinItem.adapter = arrayAdapter
+        val adapter2 = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, viewItems)
+        spinItem.setAdapter(adapter2)
+
+        spinGroup.threshold=0
+
+        spinItem.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+            Toast.makeText(applicationContext, "Предмет: $selectedItem", Toast.LENGTH_SHORT).show()
+        }
+
+        spinItem.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                spinItem.showDropDown()
+            }
+        }
+
+//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
+//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinItem.adapter = arrayAdapter
 
         spinItem.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
