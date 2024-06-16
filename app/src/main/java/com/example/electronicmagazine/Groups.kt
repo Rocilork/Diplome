@@ -71,10 +71,6 @@ class Groups : AppCompatActivity() {
             }
         }
 
-//        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewItems)
-//        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//        spinGroup.adapter = arrayAdapter
-
         spinGroup.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
